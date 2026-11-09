@@ -51,7 +51,26 @@ RSpec.describe "Shared Inbox host integration" do
       "shared_inbox_enabled", "shared_inbox_domain", "shared_inbox_nickname_template",
       "shared_inbox_category_id", "shared_inbox_resend_api_key", "shared_inbox_webhook_secret",
     )
-    expect(settings.map { |entry| entry["category"] }.uniq).to eq(["shared_inbox_with_resend"])
+    expect(settings.map { |entry| entry["category"] }.uniq).to eq([SiteSetting.categories[:shared_inbox_enabled].to_s])
+  end
+
+  it "populates the new admin settings screen using serialized plugin.id" do
+    SiteSetting.shared_inbox_enabled = false
+    sign_in(admin)
+    plugin = Discourse.plugins_by_name.fetch(SharedInbox::PLUGIN_NAME)
+    get "/admin/plugins/#{plugin.directory_name}.json"
+    expect(response.status).to eq(200)
+    serialized = response.parsed_body
+    expect(serialized["id"]).to eq(plugin.directory_name)
+    expect(serialized["name"]).to eq(serialized["id"])
+
+    # AdminAreaSettings sends @model.plugin.id to this endpoint, not name.
+    get "/admin/config/site_settings.json", params: { plugin: serialized.fetch("id") }
+    expect(response.status).to eq(200)
+    expect(response.parsed_body.fetch("site_settings").map { |entry| entry["setting"] }).to contain_exactly(
+      "shared_inbox_enabled", "shared_inbox_domain", "shared_inbox_nickname_template",
+      "shared_inbox_category_id", "shared_inbox_resend_api_key", "shared_inbox_webhook_secret",
+    )
   end
 
   it "uses the actual post creation event and persists the inbound marker" do

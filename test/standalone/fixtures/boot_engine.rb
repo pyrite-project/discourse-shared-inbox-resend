@@ -8,7 +8,7 @@ require "rails/engine"
 require "logger"
 
 module SharedInbox
-  PLUGIN_NAME = "shared-inbox-with-resend"
+  PLUGIN_NAME = "discourse-shared-inbox-resend"
 end
 require File.join(ENV.fetch("SHARED_INBOX_PLUGIN_ROOT"), "lib/shared_inbox/engine")
 

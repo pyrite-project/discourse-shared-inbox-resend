@@ -1,4 +1,4 @@
-shared_inbox_with_resend:
+discourse_shared_inbox_resend:
   shared_inbox_enabled:
     default: false
     client: true

@@ -49,7 +49,8 @@
       "admin": {
         "site_settings": {
           "categories": {
-            "shared_inbox_with_resend": "Shared Inbox with Resend"
+            "shared_inbox_with_resend": "Shared Inbox with Resend",
+            "discourse_shared_inbox_resend": "Shared Inbox with Resend"
           }
         }
       }

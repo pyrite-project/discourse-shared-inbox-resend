@@ -9,7 +9,7 @@
 标准 Docker 部署：在 `/var/discourse/containers/app.yml` 现有 `after_code` 插件克隆命令列表中加入：
 
 ```yaml
-- git clone https://github.com/pyrite-project/discourse-shared-inbox-resend.git shared-inbox-with-resend
+- git clone https://github.com/pyrite-project/discourse-shared-inbox-resend.git
 ```
 
 然后在 `/var/discourse` 中重建：
@@ -21,7 +21,7 @@
 已有 Discourse 开发环境时，在 Discourse 根目录执行：
 
 ```sh
-git clone https://github.com/pyrite-project/discourse-shared-inbox-resend.git plugins/shared-inbox-with-resend
+git clone https://github.com/pyrite-project/discourse-shared-inbox-resend.git plugins/discourse-shared-inbox-resend
 bundle exec rake db:migrate
 ```
 
@@ -46,7 +46,7 @@ bundle exec rake db:migrate
 5. 打开接收类别，点击 **Shared Inbox with Resend**。管理员可新建 Inbox，例如 `support` 对应 `support@inbox.example.com`，`sales` 对应 `sales@inbox.example.com`。也可直接访问 `/shared-inbox-settings`。
 6. 用外部邮箱发一封测试邮件，确认出现带 `inbox-support` 标签的话题；公开回复应回到原邮件线程。再验证密语、关闭、归档和恢复。
 
-插件未启用时，管理员也可以看到全部六项站点设置。可直接访问 `/admin/site_settings/category/shared_inbox_with_resend`。支持文档中的安装目录及默认的 `discourse-shared-inbox-resend` 目录，无需重命名现有安装目录。更新插件后请重启或重建 Discourse，并刷新后台页面。
+插件未启用时，管理员也可以看到全部六项站点设置。可直接访问 `/admin/site_settings/category/discourse_shared_inbox_resend`。默认安装目录为 `discourse-shared-inbox-resend`。已有的 `shared-inbox-with-resend` 目录无需重命名，其设置分组仍为 `shared_inbox_with_resend`。插件设置页面、后台筛选参数与设置归属统一使用实际安装目录标识。更新插件后请重启或重建 Discourse，并刷新后台页面。
 
 用户设置页不接收 Resend 凭据。API Key 和 Webhook 签名密钥仅供服务端使用，不下发给客户端。
 
@@ -109,7 +109,7 @@ BUNDLE_GEMFILE=test/standalone/Gemfile bundle exec rspec test/standalone
 真实 Discourse 测试环境执行迁移后：
 
 ```sh
-LOAD_PLUGINS=1 bundle exec rspec plugins/shared-inbox-with-resend/spec
+LOAD_PLUGINS=1 bundle exec rspec plugins/discourse-shared-inbox-resend/spec
 ```
 
 本次实际验证范围详见 [VALIDATION.md](VALIDATION.md)。

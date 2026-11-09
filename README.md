@@ -9,7 +9,7 @@ A Discourse plugin that turns a category into a shared email inbox using Resend 
 For a standard Docker Discourse install, add this clone command to the existing `after_code` plugin clone commands in `/var/discourse/containers/app.yml`:
 
 ```yaml
-- git clone https://github.com/pyrite-project/discourse-shared-inbox-resend.git shared-inbox-with-resend
+- git clone https://github.com/pyrite-project/discourse-shared-inbox-resend.git
 ```
 
 Rebuild from `/var/discourse`:
@@ -21,7 +21,7 @@ Rebuild from `/var/discourse`:
 For an existing Discourse development checkout, run these commands in the Discourse root:
 
 ```sh
-git clone https://github.com/pyrite-project/discourse-shared-inbox-resend.git plugins/shared-inbox-with-resend
+git clone https://github.com/pyrite-project/discourse-shared-inbox-resend.git plugins/discourse-shared-inbox-resend
 bundle exec rake db:migrate
 ```
 
@@ -42,7 +42,7 @@ Rebuild frontend assets and restart the web and Sidekiq processes using your ins
 5. Open the receiving category and select **Shared Inbox with Resend**. As an administrator create Inboxes: `support` receives `support@inbox.example.com`, `sales` receives `sales@inbox.example.com`. The same page is available at `/shared-inbox-settings`.
 6. Send a message from an external mailbox. Check that a topic with the `inbox-support` tag appears. Reply in Discourse and confirm that the email stays in the original external thread. Test a whisper and close/reopen the topic before rollout.
 
-All six site settings are available while the plugin is disabled. Administrators can also open `/admin/site_settings/category/shared_inbox_with_resend` directly. Both the documented checkout directory and the default `discourse-shared-inbox-resend` directory are supported; renaming an existing installation is not required. After updating the plugin, restart/rebuild Discourse and refresh the admin page.
+All six site settings are available while the plugin is disabled. Administrators can also open `/admin/site_settings/category/discourse_shared_inbox_resend` directly. The default checkout directory is `discourse-shared-inbox-resend`. Existing `shared-inbox-with-resend` checkouts remain supported without renaming; those installations retain the `shared_inbox_with_resend` settings category. The plugin settings page uses the installation directory as its identity, matching Discourse’s settings API. After updating the plugin, restart/rebuild Discourse and refresh the admin page.
 
 The API key and Webhook signing secret are server-only settings. No Resend credentials are entered in the user settings page.
 
@@ -96,7 +96,7 @@ BUNDLE_GEMFILE=test/standalone/Gemfile bundle exec rspec test/standalone
 Run the native host integration suite in a configured Discourse checkout after migrations:
 
 ```sh
-LOAD_PLUGINS=1 bundle exec rspec plugins/shared-inbox-with-resend/spec
+LOAD_PLUGINS=1 bundle exec rspec plugins/discourse-shared-inbox-resend/spec
 ```
 
 See [VALIDATION.md](VALIDATION.md) for exactly what was executed for this release.

@@ -11,10 +11,10 @@ Date: 2026-11-09.
 - Identity coverage includes forum username/nickname defaults, independent email identity customization, global and Inbox template precedence, placeholder validation, header injection protection and immutable queued identities.
 - Both schema migrations were exercised, including the added email nickname and Inbox template columns.
 - A minimal real Rails application booted with the plugin engine and reran its prepare callback. The regression test fails with the original callback-scoped `config.root` reference and passes when the scheduled-job path is captured outside the callback. Scheduled-job autoloading is recorded by a test adapter; this does not boot the full Discourse application.
-- Plugin activation and setting registration were exercised with the documented, repository-default and custom checkout names. The fixture resolves custom validators before plugin initializers, verifies all six settings remain discoverable while disabled, preserves stored values and secret/client flags, and checks both admin category translations. It uses host adapters; native admin discovery/filtering request specs are supplied for a full Discourse checkout.
+- Plugin activation and setting registration were exercised with legacy, repository-default and custom checkout names. The fixture checks both the directory-based `plugin.id` filter used by the new admin page and the metadata-name filter used by older screens. It verifies controller identity matches both, Discourse’s ownership map is preserved, all six settings remain available while disabled, stored values and secret/client flags are unchanged, validators load early, and the translated category agrees with the frontend category lookup. The new filter assertions reproduce the 1.1.1 empty-list bug before the fix. These checks use host adapters; native request specs also cover `/admin/plugins/:id.json` followed by `/admin/config/site_settings.json?plugin=<serialized id>` for execution in a full Discourse checkout.
 - All **39 Ruby files** passed `ruby -c`.
 - All **5 JavaScript/GJS files**, including embedded Glimmer templates, parsed using `content-tag`, `@babel/parser` and `@glimmer/syntax`. Frontend files were formatted with Prettier's Ember template-tag plugin.
-- YAML parsed successfully. English/Simplified Chinese translation key sets matched: **15 server keys and 40 client keys** per locale.
+- YAML parsed successfully. English/Simplified Chinese translation key sets matched: **15 server keys and 41 client keys** per locale.
 
 ## Not executed
 

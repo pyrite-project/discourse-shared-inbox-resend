@@ -1,28 +1,35 @@
 # frozen_string_literal: true
 
-# name: shared-inbox-with-resend
+# name: discourse-shared-inbox-resend
 # about: Shared email inboxes backed by Resend Receiving and Sending.
-# version: 1.1.1
+# version: 1.1.2
 # authors: Shared Inbox contributors
 # required_version: 3.5.0
 
 enabled_site_setting :shared_inbox_enabled
 register_asset "stylesheets/shared-inbox.scss"
 
+# Discourse's admin screen filters by the directory-based plugin.id. Keep the
+# metadata name and controller identity aligned with that id for every install.
+metadata.name = directory_name
+
 module ::SharedInbox
-  PLUGIN_NAME = "shared-inbox-with-resend"
 end
+SharedInbox::PLUGIN_NAME = name
 
 require_relative "lib/shared_inbox/engine"
 # Discourse resolves setting validators before plugin after_initialize hooks.
 require_relative "lib/shared_inbox/nickname_template_validator"
 
 after_initialize do |plugin|
-  # Settings are initially owned by the checkout directory, but admin plugin
-  # discovery and filtering use metadata.name. Support both the documented
-  # directory and Git's default repository directory without renaming installs.
-  SiteSetting.plugins.transform_values! do |owner|
-    owner == plugin.directory_name ? plugin.name : owner
+  # Preserve Discourse's directory-based ownership. Match the category used by
+  # legacy settings links as well as the new plugin settings screen.
+  settings_category = {
+    "discourse-shared-inbox-resend" => "discourse_shared_inbox_resend",
+    "shared-inbox-with-resend" => "shared_inbox_with_resend",
+  }.fetch(plugin.name, "plugins")
+  SiteSetting.plugins.each do |setting, owner|
+    SiteSetting.categories[setting] = settings_category if owner == plugin.directory_name
   end
 
   register_post_custom_field_type("shared_inbox_inbound", :boolean)

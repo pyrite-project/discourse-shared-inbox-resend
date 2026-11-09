@@ -15,13 +15,18 @@ class SiteSetting
 end
 
 class PluginActivationAdapter
-  attr_reader :directory_name, :name, :initializers
+  Metadata = Struct.new(:name)
+  attr_reader :directory_name, :metadata, :initializers
 
   def initialize(path, directory_name)
     @directory_name = directory_name
-    @name = File.read(path).match(/^# name:\s*(.+)$/)[1].strip
+    @metadata = Metadata.new(File.read(path).match(/^# name:\s*(.+)$/)[1].strip)
     @initializers = []
     instance_eval(File.read(path), path)
+  end
+
+  def name
+    metadata.name
   end
 
   def enabled_site_setting(_name); end
@@ -57,26 +62,36 @@ YAML.load_file(File.join(root, "config/settings.yml")).each do |category, defini
 end
 
 before = [SiteSetting.values.dup, SiteSetting.secret_settings.dup, SiteSetting.client_settings.dup]
+owners_before = SiteSetting.plugins.dup
 plugin.initializers.each { |initializer| initializer.call(plugin) }
 
 expected = %i[
   shared_inbox_enabled shared_inbox_domain shared_inbox_nickname_template
   shared_inbox_category_id shared_inbox_resend_api_key shared_inbox_webhook_secret
 ].sort
-owned = SiteSetting.plugins.select { |_name, owner| owner == plugin.name }.keys.sort
-abort "Settings invisible to plugin filter: #{owned.inspect}" unless owned == expected
+# The new plugin settings screen sends serialized plugin.id (the directory),
+# while legacy screens filter by plugin.name. Both must resolve the same rows.
+[plugin.directory_name, plugin.name].uniq.each do |filter|
+  owned = SiteSetting.plugins.select { |_name, owner| owner == filter }.keys.sort
+  abort "Settings invisible to plugin filter #{filter}: #{owned.inspect}" unless owned == expected
+end
+abort "Plugin id and name differ" unless plugin.name == plugin.directory_name
+abort "Controller plugin id differs" unless SharedInbox::PLUGIN_NAME == plugin.directory_name
+abort "Discourse's setting ownership was rewritten" unless SiteSetting.plugins == owners_before
 abort "Other plugin ownership changed" unless SiteSetting.plugins[:another_plugin_setting] == "another-plugin"
 abort "Plugin was enabled during registration" unless SiteSetting.shared_inbox_enabled == false
 after = [SiteSetting.values, SiteSetting.secret_settings, SiteSetting.client_settings]
 abort "Stored values or visibility metadata changed" unless before == after
 abort "Secret exposed to client" unless (SiteSetting.secret_settings & SiteSetting.client_settings).empty?
 
-category = "shared_inbox_with_resend"
-abort "Missing settings group" unless expected.all? { |name| SiteSetting.categories[name] == category }
 %w[en zh_CN].each do |locale|
   translations = YAML.load_file(File.join(root, "config/locales/client.#{locale}.yml"))
-  label = translations.dig(locale, "admin_js", "admin", "site_settings", "categories", category)
-  abort "Missing #{locale} admin category label" if label.blank?
+  # Match AdminPlugin.settingCategoryName: use the translated snake-case name,
+  # falling back to the standard plugins category for a custom checkout name.
+  category_name = plugin.name.tr("-", "_")
+  label = translations.dig(locale, "admin_js", "admin", "site_settings", "categories", category_name)
+  category = label.present? ? category_name : "plugins"
+  abort "Admin category does not match settings" unless expected.all? { |name| SiteSetting.categories[name] == category }
 end
 
 puts "Plugin settings registration passed: #{plugin.directory_name}"
