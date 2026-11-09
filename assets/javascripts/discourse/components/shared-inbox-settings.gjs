@@ -13,6 +13,7 @@ export default class SharedInboxSettings extends Component {
   @service currentUser;
   @tracked data = this.args.data;
   @tracked emailUsername = this.args.data.profile.email_username;
+  @tracked emailNickname = this.args.data.profile.email_nickname;
   @tracked signature = this.args.data.profile.signature;
   @tracked editing = null;
   @tracked saved = false;
@@ -37,6 +38,10 @@ export default class SharedInboxSettings extends Component {
     this.signature = event.target.value;
     this.saved = false;
   }
+  @action changeNickname(event) {
+    this.emailNickname = event.target.value;
+    this.saved = false;
+  }
   @action newInbox() {
     this.editing = {
       slug: "",
@@ -44,6 +49,7 @@ export default class SharedInboxSettings extends Component {
       enabled: true,
       ignore_unsubscribe: true,
       reply_as: "inbox",
+      nickname_template: "",
     };
   }
   @action editInbox(inbox) {
@@ -79,10 +85,16 @@ export default class SharedInboxSettings extends Component {
       data: {
         profile: {
           email_username: this.emailUsername,
+          email_nickname: this.emailNickname,
           signature: this.signature,
         },
       },
     });
+    if (this.saved) {
+      this.emailUsername = this.data.profile.email_username;
+      this.emailNickname = this.data.profile.email_nickname;
+      this.signature = this.data.profile.signature;
+    }
   }
   @action async saveInbox(event) {
     event.preventDefault();
@@ -129,6 +141,16 @@ export default class SharedInboxSettings extends Component {
             <span>@{{this.data.domain}}</span>
           </div>
           <p class="description">{{i18n "shared_inbox.username_help"}}</p>
+          <label for="si-nickname">{{i18n
+              "shared_inbox.email_nickname"
+            }}</label>
+          <input
+            id="si-nickname"
+            value={{this.emailNickname}}
+            maxlength="120"
+            {{on "input" this.changeNickname}}
+          />
+          <p class="description">{{i18n "shared_inbox.nickname_help"}}</p>
           <label for="si-signature">{{i18n "shared_inbox.signature"}}</label>
           <textarea
             id="si-signature"
@@ -158,6 +180,17 @@ export default class SharedInboxSettings extends Component {
             readonly
           />
           <p>{{i18n "shared_inbox.webhook_help"}}</p>
+          <label for="si-global-nickname-template">{{i18n
+              "shared_inbox.global_nickname_template"
+            }}</label>
+          <input
+            id="si-global-nickname-template"
+            value={{this.data.global_nickname_template}}
+            readonly
+          />
+          <p class="description">{{i18n
+              "shared_inbox.global_nickname_template_help"
+            }}</p>
           <DButton
             @action={{this.newInbox}}
             @label="shared_inbox.new_inbox"
@@ -231,6 +264,20 @@ export default class SharedInboxSettings extends Component {
                     "shared_inbox.reply_as_user"
                   }}</option>
               </select>
+              <label for="si-nickname-template">{{i18n
+                  "shared_inbox.nickname_template"
+                }}</label>
+              <input
+                id="si-nickname-template"
+                name="nickname_template"
+                value={{this.editing.nickname_template}}
+                placeholder={{this.data.global_nickname_template}}
+                maxlength="255"
+                {{on "input" this.changeField}}
+              />
+              <p class="description">{{i18n
+                  "shared_inbox.nickname_template_help"
+                }}</p>
               <button
                 class="btn btn-primary"
                 type="submit"

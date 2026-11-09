@@ -6,7 +6,7 @@
         "intro": "回复导入的邮件话题即可发送邮件。密语和系统操作记录仅保留在 Discourse 中。",
         "profile": "我的邮件身份",
         "email_username": "邮件用户名",
-        "username_help": "使用小写字母、数字、点、下划线或连字符。在 Inbox 选择以用户身份回复时生效。默认：user-<用户 ID>。",
+        "username_help": "默认使用论坛 username。支持小写字母、数字、点、下划线或连字符。在 Inbox 选择以用户身份回复时生效。",
         "signature": "签名（纯文本）",
         "save": "保存",
         "saved": "已保存",
@@ -36,7 +36,13 @@
           "review": "需要检查",
           "cancelled": "已取消",
           "sent": "已发送"
-        }
+        },
+        "email_nickname": "邮件昵称",
+        "nickname_help": "默认使用论坛 nickname；未设置论坛昵称时使用 username。邮件昵称和邮件用户名可以分别修改；留空恢复论坛昵称。",
+        "global_nickname_template": "全局发件人昵称模板",
+        "global_nickname_template_help": "在插件站点设置 shared_inbox_nickname_template 中修改。未单独设置模板的 Inbox 会继承此值。",
+        "nickname_template": "Inbox 发件人昵称模板",
+        "nickname_template_help": "留空继承全局模板。例如：{user_nickname} @ XXX。支持 {user_nickname}、{user_username}、{inbox_name}、{inbox_slug}。"
       }
     }
   }

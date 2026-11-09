@@ -6,7 +6,7 @@
         "intro": "Reply to an imported topic to send an email. Whispers and system actions stay inside Discourse.",
         "profile": "My email identity",
         "email_username": "Email username",
-        "username_help": "Lowercase letters, numbers, dots, underscores and hyphens. Used when an Inbox replies as a user. Default: user-<user ID>.",
+        "username_help": "Defaults to your forum username. Lowercase letters, numbers, dots, underscores and hyphens. Used when an Inbox replies as a user.",
         "signature": "Signature (plain text)",
         "save": "Save",
         "saved": "Saved",
@@ -36,7 +36,13 @@
           "review": "Needs review",
           "cancelled": "Cancelled",
           "sent": "Sent"
-        }
+        },
+        "email_nickname": "Email nickname",
+        "nickname_help": "Defaults to your forum nickname, or forum username if no nickname is set. Edit independently of your email username; leave blank to use the forum nickname.",
+        "global_nickname_template": "Global sender nickname template",
+        "global_nickname_template_help": "Edit shared_inbox_nickname_template in the plugin site settings. Inboxes inherit it unless they set their own template.",
+        "nickname_template": "Inbox sender nickname template",
+        "nickname_template_help": "Leave blank to inherit the global template. Example: {user_nickname} @ XXX. Placeholders: {user_nickname}, {user_username}, {inbox_name}, {inbox_slug}."
       }
     }
   }

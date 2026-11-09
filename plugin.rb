@@ -2,7 +2,7 @@
 
 # name: shared-inbox-with-resend
 # about: Shared email inboxes backed by Resend Receiving and Sending.
-# version: 1.0.0
+# version: 1.1.0
 # authors: Shared Inbox contributors
 # required_version: 3.5.0
 
@@ -17,7 +17,7 @@ require_relative "lib/shared_inbox/engine"
 
 after_initialize do
   register_post_custom_field_type("shared_inbox_inbound", :boolean)
-  %w[configuration signature email policy resend_client inbound outbound title_sync].each do |name|
+  %w[nickname_template nickname_template_validator configuration signature email policy resend_client inbound outbound title_sync].each do |name|
     require_relative "lib/shared_inbox/#{name}"
   end
 

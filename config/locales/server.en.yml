@@ -5,7 +5,8 @@
       "shared_inbox_domain": "Resend verified sending and receiving domain, for example inbox.example.com (without @).",
       "shared_inbox_category_id": "Category for all received emails. Enable tagging. Configure category access for the intended support team.",
       "shared_inbox_resend_api_key": "Resend API key with permission to read received email and send email. Never expose this secret to clients.",
-      "shared_inbox_webhook_secret": "Resend/Svix webhook signing secret, beginning with whsec_."
+      "shared_inbox_webhook_secret": "Resend/Svix webhook signing secret, beginning with whsec_.",
+      "shared_inbox_nickname_template": "Default sender nickname template. Example: {user_nickname} @ XXX. Supports {user_nickname}, {user_username}, {inbox_name}, {inbox_slug}. An Inbox template overrides this setting."
     },
     "shared_inbox": {
       "no_subject": "(No subject)",
@@ -16,7 +17,8 @@
         "slug_in_use": "Cannot rename an Inbox with existing conversations; disable it instead.",
         "reserved_username": "This address is reserved or already used by an Inbox or user.",
         "inbox_in_use": "This Inbox has conversations. Disable it instead of deleting it.",
-        "retry_unsafe": "Cannot safely retry this delivery. Inspect its status in Resend first."
+        "retry_unsafe": "Cannot safely retry this delivery. Inspect its status in Resend first.",
+        "invalid_nickname_template": "Use at most 255 characters with no control characters. Supported placeholders: {user_nickname}, {user_username}, {inbox_name}, {inbox_slug}."
       }
     }
   }

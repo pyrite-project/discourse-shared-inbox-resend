@@ -46,9 +46,11 @@ RSpec.describe SharedInbox::Outbound do
     expect(payload["from"]).to include("alice@inbox.example.com")
     expect(payload["html"]).to include("Regards<br>&lt;script&gt;x&lt;/script&gt;")
   end
-  it "uses a unique default identity for an unconfigured user" do
+  it "defaults to the forum username and nickname for an unconfigured user" do
     conversation.inbox.update!(reply_as: "user")
-    expect(queued.payload["from"]).to include("user-1@inbox.example.com")
+    from = Mail::Address.new(queued.payload["from"])
+    expect(from.address).to eq("agent@inbox.example.com")
+    expect(from.display_name).to eq("Agent Name")
   end
   it "records success and does not resend on a duplicate job" do
     delivery = queued

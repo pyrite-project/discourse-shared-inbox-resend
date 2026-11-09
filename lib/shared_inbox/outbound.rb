@@ -19,13 +19,13 @@ module SharedInbox
     end
 
     def self.payload(post, conversation)
-      profile = Profile.find_by(user_id: post.user_id)
+      profile = Profile.for_user(post.user)
       inbox = conversation.inbox
-      username = profile&.email_username.presence || "user-#{post.user_id}"
+      username = profile.sender_username
       local = inbox.reply_as == "user" ? username : inbox.slug
       from = Mail::Address.new("#{local}@#{conversation.domain}")
-      from.display_name = (post.user.name.presence || post.user.username).gsub(/[\r\n]/, " ")
-      signature = profile&.signature.to_s
+      from.display_name = NicknameTemplate.render(profile: profile, inbox: inbox)
+      signature = profile.signature.to_s
       html = PrettyText.format_for_email(post.cooked, post)
       if signature.present?
         html += "<hr><div>#{ERB::Util.html_escape(signature).gsub("\n", '<br>')}</div>"

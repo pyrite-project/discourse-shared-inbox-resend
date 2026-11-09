@@ -10,6 +10,7 @@ RSpec.describe "Shared Inbox host integration" do
     SiteSetting.shared_inbox_domain = "inbox.example.com"
     SiteSetting.shared_inbox_category_id = category.id
     SiteSetting.shared_inbox_resend_api_key = "test-key"
+    SiteSetting.shared_inbox_nickname_template = "{user_nickname}"
     SiteSetting.shared_inbox_webhook_secret = "whsec_#{Base64.strict_encode64('test-signing-key')}"
     SiteSetting.tagging_enabled = true
     @inbox = SharedInbox::Inbox.create!(slug: "support", name: "Support")
@@ -79,10 +80,29 @@ RSpec.describe "Shared Inbox host integration" do
 
   it "allows users to change only their own profile" do
     sign_in(user)
-    put "/shared-inbox/profile.json", params: { profile: { user_id: admin.id, email_username: "alice", signature: "Regards" } }
+    put "/shared-inbox/profile.json", params: { profile: { user_id: admin.id, email_username: "alice", email_nickname: "Alice Support", signature: "Regards" } }
     expect(response.status).to eq(200)
     expect(SharedInbox::Profile.find_by(user_id: user.id).signature).to eq("Regards")
+    expect(SharedInbox::Profile.find_by(user_id: user.id).email_nickname).to eq("Alice Support")
     expect(SharedInbox::Profile.find_by(user_id: admin.id)).to be_nil
+  end
+
+  it "defaults email identity to the forum username and nickname" do
+    user.update!(name: "Forum Nickname")
+    sign_in(user)
+    get "/shared-inbox/settings.json"
+    expect(response.status).to eq(200)
+    expect(response.parsed_body["profile"]).to include(
+      "email_username" => user.username.downcase,
+      "email_nickname" => "Forum Nickname",
+    )
+  end
+
+  it "saves an Inbox nickname template for administrators" do
+    sign_in(admin)
+    put "/shared-inbox/inboxes/#{@inbox.id}.json", params: { inbox: { nickname_template: "{user_nickname} @ Support" } }
+    expect(response.status).to eq(200)
+    expect(@inbox.reload.nickname_template).to eq("{user_nickname} @ Support")
   end
 
   it "denies settings access when the category is restricted" do

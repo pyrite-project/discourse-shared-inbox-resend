@@ -13,14 +13,19 @@ module SharedInbox
     end
 
     def show
-      profile = Profile.find_by(user_id: current_user.id)
+      profile = Profile.for_user(current_user)
       data = {
         category_id: Configuration.category.id,
         domain: SiteSetting.shared_inbox_domain,
-        profile: { email_username: profile&.email_username || "user-#{current_user.id}", signature: profile&.signature.to_s },
+        profile: {
+          email_username: profile.sender_username,
+          email_nickname: profile.sender_nickname,
+          signature: profile.signature.to_s,
+        },
         inboxes: Inbox.order(:slug).map { |inbox| inbox_json(inbox) },
       }
       if current_user.admin?
+        data[:global_nickname_template] = SiteSetting.shared_inbox_nickname_template
         data[:webhook_url] = "#{Discourse.base_url}/shared-inbox/webhook"
         data[:deliveries] = Delivery.where.not(state: "sent").order(id: :desc).limit(50).map do |delivery|
           delivery.slice(:id, :post_id, :state, :attempts, :error_code, :created_at)
@@ -34,7 +39,7 @@ module SharedInbox
 
     def profile
       record = Profile.find_or_initialize_by(user_id: current_user.id)
-      record.assign_attributes(params.require(:profile).permit(:email_username, :signature))
+      record.assign_attributes(params.require(:profile).permit(:email_username, :email_nickname, :signature))
       save_record(record)
     end
 
@@ -81,12 +86,12 @@ module SharedInbox
     end
 
     def inbox_params
-      params.require(:inbox).permit(:slug, :name, :enabled, :ignore_unsubscribe, :reply_as)
+      params.require(:inbox).permit(:slug, :name, :enabled, :ignore_unsubscribe, :reply_as, :nickname_template)
     end
 
     def inbox_json(inbox)
       fields = %w[id slug name]
-      fields += %w[enabled ignore_unsubscribe reply_as] if current_user.admin?
+      fields += %w[enabled ignore_unsubscribe reply_as nickname_template] if current_user.admin?
       inbox.attributes.slice(*fields)
     end
 

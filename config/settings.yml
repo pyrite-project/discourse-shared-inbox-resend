@@ -4,6 +4,9 @@ plugins:
     client: true
   shared_inbox_domain:
     default: ""
+  shared_inbox_nickname_template:
+    default: "{user_nickname}"
+    validator: "SharedInbox::NicknameTemplateValidator"
   shared_inbox_category_id:
     default: ""
     type: category

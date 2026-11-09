@@ -14,6 +14,7 @@ module SiteSetting
     attr_accessor :shared_inbox_enabled, :shared_inbox_domain, :shared_inbox_category_id,
                   :shared_inbox_resend_api_key, :tagging_enabled, :max_post_length,
                   :max_topic_title_length, :shared_inbox_webhook_secret
+    attr_accessor :shared_inbox_nickname_template
   end
 end
 module Archetype
@@ -43,6 +44,8 @@ end
 ActiveRecord::Migration.verbose = false
 require File.join(ROOT, "db/migrate/20261109000001_create_shared_inbox_tables")
 CreateSharedInboxTables.new.migrate(:up)
+require File.join(ROOT, "db/migrate/20261109000002_add_shared_inbox_nicknames")
+AddSharedInboxNicknames.new.migrate(:up)
 ActiveRecord::Schema.define do
   create_table(:users) { |t| t.string :username; t.string :name; t.boolean :allowed, default: true; t.boolean :suspended, default: false; t.boolean :staged, default: false }
   create_table(:categories) { |t| t.string :name }
@@ -78,7 +81,7 @@ class PostCreator
   end
 end
 Dir[File.join(ROOT, "app/models/shared_inbox/*.rb")].sort.each { |f| require f }
-%w[configuration signature email policy resend_client inbound outbound title_sync].each { |name| require File.join(ROOT, "lib/shared_inbox", name) }
+%w[nickname_template nickname_template_validator configuration signature email policy resend_client inbound outbound title_sync].each { |name| require File.join(ROOT, "lib/shared_inbox", name) }
 I18n.load_path += Dir[File.join(ROOT, "config/locales/server.*.yml")]
 
 module MailFixtures
@@ -106,6 +109,7 @@ RSpec.configure do |config|
     SiteSetting.shared_inbox_domain = "inbox.example.com"
     SiteSetting.shared_inbox_category_id = Category.create!(name: "Support").id
     SiteSetting.shared_inbox_resend_api_key = "test-secret"
+    SiteSetting.shared_inbox_nickname_template = "{user_nickname}"
     SiteSetting.tagging_enabled = true
     SiteSetting.max_post_length = 32_000
     SiteSetting.max_topic_title_length = 255

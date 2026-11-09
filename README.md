@@ -25,7 +25,7 @@ git clone https://github.com/pyrite-project/discourse-shared-inbox-resend.git pl
 bundle exec rake db:migrate
 ```
 
-Rebuild frontend assets and restart the web and Sidekiq processes using your installation's standard procedure.
+Rebuild frontend assets and restart the web and Sidekiq processes using your installation's standard procedure. Updating to 1.1.0 adds a database migration for email nicknames and Inbox templates; run migrations before restarting, or rebuild the Docker installation.
 
 ## Configure
 
@@ -34,6 +34,7 @@ Rebuild frontend assets and restart the web and Sidekiq processes using your ins
 3. In **Admin → Settings → Plugins**, configure:
    - `shared_inbox_domain`: for example `inbox.example.com`, without an address, scheme or path.
    - `shared_inbox_category_id`: the receiving category.
+   - `shared_inbox_nickname_template`: global sender display name, for example `{user_nickname} @ XXX`.
    - `shared_inbox_resend_api_key`: a Resend key with access to retrieve received emails and send messages.
    - `shared_inbox_webhook_secret`: the signing secret for the Webhook below (`whsec_...`). This is not your API key.
    - `shared_inbox_enabled`: enable after configuration.
@@ -45,7 +46,9 @@ The API key and Webhook signing secret are server-only settings. No Resend crede
 
 ## Inboxes and personal identity
 
-Each Inbox has an enabled switch, **Ignore Unsubscribe headers**, and a sender mode. Sender mode chooses `inbox-slug@domain` or `email-username@domain`; the display name comes from the replying Discourse user. Users who can reply in the category can set their own email username and plain-text signature. The default local part is `user-<Discourse user ID>`. Usernames are unique, validated, and cannot overlap Inbox addresses or another user's reserved default address.
+Each Inbox has an enabled switch, **Ignore Unsubscribe headers**, a sender mode and an optional sender nickname template. Sender mode chooses `inbox-slug@domain` or `email-username@domain`. Users who can reply in the category can edit their email username, email nickname and plain-text signature independently. The email username defaults to the forum username (lowercase). The email nickname defaults to the forum nickname, or the forum username if no nickname is set. Clearing a custom email nickname restores the forum nickname. Saved email usernames are preserved on upgrade. Usernames remain validated and unique; personal email identity changes do not change the forum profile.
+
+The global `shared_inbox_nickname_template` site setting defaults to `{user_nickname}`. For example, `{user_nickname} @ XXX` sends as `Alice @ XXX <alice@domain>`. An Inbox can override this template; leave its template blank to inherit the global setting. Templates apply to the sender display name in both sender-address modes. Supported placeholders are `{user_nickname}` (effective email nickname), `{user_username}` (effective email username), `{inbox_name}` and `{inbox_slug}`. Templates use plain placeholder substitution, with no executable code. Unknown placeholders, control characters and templates longer than 255 characters are rejected. Existing queued messages keep their original sender snapshot.
 
 An Inbox can be renamed or deleted only while unused. Disable an Inbox that already has conversations. Re-enabling resumes queued outbound delivery if it remains inside the idempotency window.
 

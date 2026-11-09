@@ -25,7 +25,7 @@ git clone https://github.com/pyrite-project/discourse-shared-inbox-resend.git pl
 bundle exec rake db:migrate
 ```
 
-随后按当前安装方式重建前端资源，并重启 Web 和 Sidekiq 进程。
+随后按当前安装方式重建前端资源，并重启 Web 和 Sidekiq 进程。 升级到 1.1.0 时需执行新增的邮件昵称和 Inbox 模板数据库迁移；Docker 部署可通过重建完成。
 
 ## 配置步骤
 
@@ -37,6 +37,7 @@ bundle exec rake db:migrate
    | --- | --- |
    | `shared_inbox_domain` | 例如 `inbox.example.com`，不含 `@`、协议或路径 |
    | `shared_inbox_category_id` | 邮件接收类别 |
+   | `shared_inbox_nickname_template` | 全局发件人昵称模板，例如 `{user_nickname} @ XXX` |
    | `shared_inbox_resend_api_key` | 可读取接收邮件并发送邮件的 Resend API Key |
    | `shared_inbox_webhook_secret` | Webhook 的 `whsec_...` 签名密钥，不是 API Key |
    | `shared_inbox_enabled` | 配置完成后启用 |
@@ -49,12 +50,14 @@ bundle exec rake db:migrate
 
 ## Inbox 和个人设置
 
-每个 Inbox 可配置启用状态、是否忽略退订头，以及发件地址模式：
+每个 Inbox 可配置启用状态、是否忽略退订头、发件人昵称模板，以及发件地址模式：
 
 - Inbox 模式：`<inbox-slug>@<domain>`。
 - 用户模式：`<email-username>@<domain>`。
 
-发件人显示名使用回复用户的 Discourse 名称或用户名。拥有类别回复权限的用户可在类别入口设置自己的邮件用户名和纯文本签名。未配置时默认使用 `user-<用户 ID>`，例如 `user-42@inbox.example.com`。邮件用户名须唯一，使用小写字母、数字、点、下划线或连字符，不得占用 Inbox 或其他用户保留的默认地址。
+拥有类别回复权限的用户可在类别入口分别修改邮件 username、邮件 nickname 和纯文本签名。邮件 username 默认使用论坛 username（转换为小写），邮件 nickname 默认使用论坛 nickname；未设置论坛昵称时使用论坛 username。清空自定义邮件 nickname 后恢复论坛昵称。升级时保留已有的邮件 username 设置。邮件身份设置不修改论坛个人资料。邮件 username 仍须唯一，并使用小写字母、数字、点、下划线或连字符。
+
+全局站点设置 `shared_inbox_nickname_template` 默认是 `{user_nickname}`。例如设置为 `{user_nickname} @ XXX`，发件人显示为 `Alice @ XXX <alice@domain>`。Inbox 可以单独设置模板，留空时继承全局设置；模板优先级为 **Inbox → 全局 → `{user_nickname}`**。模板在两种发件地址模式下都生效，仅影响发件人显示名。支持 `{user_nickname}`（实际邮件昵称）、`{user_username}`（实际邮件用户名）、`{inbox_name}` 和 `{inbox_slug}`。模板仅进行占位符替换，不执行代码；不支持的占位符、控制字符和超过 255 个字符的模板会被拒绝。已入队邮件保留创建时的身份快照。
 
 未使用的 Inbox 可修改 slug 或删除。已有邮件话题的 Inbox 请停用；重新启用后，尚在幂等保护窗口内的待发邮件会继续处理。
 
