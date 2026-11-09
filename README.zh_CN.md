@@ -4,17 +4,28 @@
 
 将 Discourse 类别变成由 Resend 提供收发能力的共享收件箱。需要 Discourse 3.5+、PostgreSQL、Redis/Sidekiq，并启用 Discourse 标签。界面、站点设置及插件错误信息支持英文和简体中文。
 
-## 从 git bundle 安装
+## 安装
 
-```sh
-git clone shared-inbox-with-resend.bundle shared-inbox-with-resend
-cd shared-inbox-with-resend
-git log --oneline
+标准 Docker 部署：在 `/var/discourse/containers/app.yml` 现有 `after_code` 插件克隆命令列表中加入：
+
+```yaml
+- git clone https://github.com/pyrite-project/discourse-shared-inbox-resend.git shared-inbox-with-resend
 ```
 
-已有 Discourse 开发环境时，可直接将 bundle 克隆到 `plugins/shared-inbox-with-resend`，在 Discourse 根目录运行 `RAILS_ENV=production bundle exec rake db:migrate`，然后按当前安装方式重建前端资源、重启 Web 和 Sidekiq。
+然后在 `/var/discourse` 中重建：
 
-标准 Docker 部署：先将 bundle 中的仓库推送到自己的 Git 服务；在 `/var/discourse/containers/app.yml` 的 `after_code` 插件克隆配置中加入该仓库，再执行 `./launcher rebuild app`。bundle 是本地 Git 仓库文件，不是可填入 Discourse 插件管理页面的远程地址。运行中容器内手动放入的插件不会自动保留到下次重建。
+```sh
+./launcher rebuild app
+```
+
+已有 Discourse 开发环境时，在 Discourse 根目录执行：
+
+```sh
+git clone https://github.com/pyrite-project/discourse-shared-inbox-resend.git plugins/shared-inbox-with-resend
+bundle exec rake db:migrate
+```
+
+随后按当前安装方式重建前端资源，并重启 Web 和 Sidekiq 进程。
 
 ## 配置步骤
 

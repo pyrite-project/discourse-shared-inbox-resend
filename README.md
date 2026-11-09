@@ -1,30 +1,31 @@
 # Shared Inbox with Resend
 
-[下载 git bundle / Download git bundle](https://github.com/pyrite-project/discourse-shared-inbox-resend/raw/refs/heads/main/releases/shared-inbox-with-resend-v1.0.0.bundle)
-
-SHA-256: `894456d6c60bb6f29bd41f66aecc1745a65b5795436786f258c0da09312604c8`
-
-此仓库包含可安装的插件源码，`releases/` 目录提供完整 git bundle。Bundle 内含中英说明、测试和 `v1.0.0` 标签。
-
-```sh
-git clone shared-inbox-with-resend-v1.0.0.bundle shared-inbox-with-resend
-```
-
 [中文说明](README.zh_CN.md)
 
 A Discourse plugin that turns a category into a shared email inbox using Resend Receiving and Sending. Requires Discourse 3.5+ with tagging, PostgreSQL, Redis/Sidekiq and a domain configured for both receiving and sending in Resend. The plugin has English and Simplified Chinese translations.
 
-## Install from the bundle
+## Install
 
-```sh
-git clone shared-inbox-with-resend.bundle shared-inbox-with-resend
-cd shared-inbox-with-resend
-git log --oneline
+For a standard Docker Discourse install, add this clone command to the existing `after_code` plugin clone commands in `/var/discourse/containers/app.yml`:
+
+```yaml
+- git clone https://github.com/pyrite-project/discourse-shared-inbox-resend.git shared-inbox-with-resend
 ```
 
-For an existing development checkout, clone the bundle directly into `plugins/shared-inbox-with-resend`, run `RAILS_ENV=production bundle exec rake db:migrate` in the Discourse root, then rebuild frontend assets and restart all web/Sidekiq processes using your installation's standard procedure.
+Rebuild from `/var/discourse`:
 
-For a standard Docker Discourse install, first clone the bundle to your own Git server. Add that repository to the `after_code` plugin clone hooks in `/var/discourse/containers/app.yml`, then run `./launcher rebuild app`. Bundle files are local Git repositories, not URLs for the Discourse plugin UI. Do not place a bundle inside the running container and expect it to survive a rebuild.
+```sh
+./launcher rebuild app
+```
+
+For an existing Discourse development checkout, run these commands in the Discourse root:
+
+```sh
+git clone https://github.com/pyrite-project/discourse-shared-inbox-resend.git plugins/shared-inbox-with-resend
+bundle exec rake db:migrate
+```
+
+Rebuild frontend assets and restart the web and Sidekiq processes using your installation's standard procedure.
 
 ## Configure
 

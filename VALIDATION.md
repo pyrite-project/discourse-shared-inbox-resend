@@ -11,7 +11,6 @@ Date: 2026-11-09.
 - All **31 Ruby files** passed `ruby -c`.
 - All **5 JavaScript/GJS files**, including embedded Glimmer templates, parsed using `content-tag`, `@babel/parser` and `@glimmer/syntax`. Frontend files were formatted with Prettier's Ember template-tag plugin.
 - YAML parsed successfully. English/Simplified Chinese translation key sets matched: **13 server keys and 33 client keys** per locale.
-- The Git bundle was verified and cloned into a fresh checkout. Git integrity and branch/tag contents were checked.
 
 ## Not executed
 
