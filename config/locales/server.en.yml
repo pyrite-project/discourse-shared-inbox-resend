@@ -1,0 +1,23 @@
+{
+  "en": {
+    "site_settings": {
+      "shared_inbox_enabled": "Enable Shared Inbox with Resend.",
+      "shared_inbox_domain": "Resend verified sending and receiving domain, for example inbox.example.com (without @).",
+      "shared_inbox_category_id": "Category for all received emails. Enable tagging. Configure category access for the intended support team.",
+      "shared_inbox_resend_api_key": "Resend API key with permission to read received email and send email. Never expose this secret to clients.",
+      "shared_inbox_webhook_secret": "Resend/Svix webhook signing secret, beginning with whsec_."
+    },
+    "shared_inbox": {
+      "no_subject": "(No subject)",
+      "empty_body": "(Empty email)",
+      "attachments": "Attachments (available in Resend)",
+      "from": "From",
+      "errors": {
+        "slug_in_use": "Cannot rename an Inbox with existing conversations; disable it instead.",
+        "reserved_username": "This address is reserved or already used by an Inbox or user.",
+        "inbox_in_use": "This Inbox has conversations. Disable it instead of deleting it.",
+        "retry_unsafe": "Cannot safely retry this delivery. Inspect its status in Resend first."
+      }
+    }
+  }
+}

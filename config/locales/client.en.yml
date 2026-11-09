@@ -1,0 +1,43 @@
+{
+  "en": {
+    "js": {
+      "shared_inbox": {
+        "title": "Shared Inbox with Resend",
+        "intro": "Reply to an imported topic to send an email. Whispers and system actions stay inside Discourse.",
+        "profile": "My email identity",
+        "email_username": "Email username",
+        "username_help": "Lowercase letters, numbers, dots, underscores and hyphens. Used when an Inbox replies as a user. Default: user-<user ID>.",
+        "signature": "Signature (plain text)",
+        "save": "Save",
+        "saved": "Saved",
+        "admin": "Manage Inboxes",
+        "webhook": "Resend Webhook URL",
+        "webhook_help": "Subscribe to email.received and enter the signing secret in the plugin site settings. Domain and API key are configured in site settings.",
+        "new_inbox": "New Inbox",
+        "enabled": "Enabled",
+        "disabled": "Disabled",
+        "edit": "Edit",
+        "delete": "Delete unused Inbox",
+        "slug": "Inbox slug",
+        "name": "Display name",
+        "ignore_unsubscribe": "Ignore incoming emails containing a List-Unsubscribe or Unsubscribe header",
+        "reply_as": "Reply sender address",
+        "reply_as_inbox": "Inbox: <inbox-slug>@<domain>",
+        "reply_as_user": "User: <email-username>@<domain>",
+        "cancel": "Cancel",
+        "deliveries": "Outgoing queue",
+        "delivery_help": "Pending emails retry automatically. Review means the idempotency window expired; check Resend logs before taking further action. Sent emails are omitted.",
+        "retry": "Retry",
+        "no_pending": "None",
+        "receive_errors": "Incoming queue",
+        "states": {
+          "pending": "Pending",
+          "failed": "Failed",
+          "review": "Needs review",
+          "cancelled": "Cancelled",
+          "sent": "Sent"
+        }
+      }
+    }
+  }
+}

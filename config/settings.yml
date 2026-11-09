@@ -1,0 +1,16 @@
+plugins:
+  shared_inbox_enabled:
+    default: false
+    client: true
+  shared_inbox_domain:
+    default: ""
+  shared_inbox_category_id:
+    default: ""
+    type: category
+    client: true
+  shared_inbox_resend_api_key:
+    default: ""
+    secret: true
+  shared_inbox_webhook_secret:
+    default: ""
+    secret: true

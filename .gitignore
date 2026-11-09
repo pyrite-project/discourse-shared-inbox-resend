@@ -1,0 +1,5 @@
+.bundle/
+vendor/
+node_modules/
+coverage/
+.rspec_status

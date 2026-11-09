@@ -1,0 +1,23 @@
+{
+  "zh_CN": {
+    "site_settings": {
+      "shared_inbox_enabled": "启用 Shared Inbox with Resend。",
+      "shared_inbox_domain": "已在 Resend 验证并启用收发的域名，例如 inbox.example.com（不含 @）。",
+      "shared_inbox_category_id": "邮件接收类别。需启用标签，并将类别访问权限设置为预期的客服团队。",
+      "shared_inbox_resend_api_key": "允许读取接收邮件和发送邮件的 Resend API Key。此密钥不会发送到客户端。",
+      "shared_inbox_webhook_secret": "Resend/Svix Webhook 签名密钥，以 whsec_ 开头。"
+    },
+    "shared_inbox": {
+      "no_subject": "（无主题）",
+      "empty_body": "（邮件正文为空）",
+      "attachments": "附件（可在 Resend 中查看）",
+      "from": "发件人",
+      "errors": {
+        "slug_in_use": "已有邮件话题的 Inbox 不可修改 slug，请停用或新建 Inbox。",
+        "reserved_username": "此地址已被保留或已被 Inbox / 用户使用。",
+        "inbox_in_use": "此 Inbox 已有邮件话题，请停用而非删除。",
+        "retry_unsafe": "无法安全重试此邮件，请先检查 Resend 中的发送状态。"
+      }
+    }
+  }
+}
