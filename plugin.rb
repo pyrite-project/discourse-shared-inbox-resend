@@ -2,7 +2,7 @@
 
 # name: shared-inbox-with-resend
 # about: Shared email inboxes backed by Resend Receiving and Sending.
-# version: 1.1.0
+# version: 1.1.1
 # authors: Shared Inbox contributors
 # required_version: 3.5.0
 
@@ -14,10 +14,19 @@ module ::SharedInbox
 end
 
 require_relative "lib/shared_inbox/engine"
+# Discourse resolves setting validators before plugin after_initialize hooks.
+require_relative "lib/shared_inbox/nickname_template_validator"
 
-after_initialize do
+after_initialize do |plugin|
+  # Settings are initially owned by the checkout directory, but admin plugin
+  # discovery and filtering use metadata.name. Support both the documented
+  # directory and Git's default repository directory without renaming installs.
+  SiteSetting.plugins.transform_values! do |owner|
+    owner == plugin.directory_name ? plugin.name : owner
+  end
+
   register_post_custom_field_type("shared_inbox_inbound", :boolean)
-  %w[nickname_template nickname_template_validator configuration signature email policy resend_client inbound outbound title_sync].each do |name|
+  %w[configuration signature email policy resend_client inbound outbound title_sync].each do |name|
     require_relative "lib/shared_inbox/#{name}"
   end
 

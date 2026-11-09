@@ -31,7 +31,7 @@ Rebuild frontend assets and restart the web and Sidekiq processes using your ins
 
 1. Configure a dedicated domain/subdomain in Resend, including its receiving MX records and sending SPF/DKIM records. Both receiving and sending must be enabled. Avoid replacing existing organizational mail MX records unintentionally.
 2. Create a Discourse category and grant the intended team permission to see and reply. All imported content uses this category's permissions. Enable Discourse tagging.
-3. In **Admin → Settings → Plugins**, configure:
+3. In **Admin → Site settings**, open **Shared Inbox with Resend** (or search `shared_inbox`) and configure:
    - `shared_inbox_domain`: for example `inbox.example.com`, without an address, scheme or path.
    - `shared_inbox_category_id`: the receiving category.
    - `shared_inbox_nickname_template`: global sender display name, for example `{user_nickname} @ XXX`.
@@ -41,6 +41,8 @@ Rebuild frontend assets and restart the web and Sidekiq processes using your ins
 4. In Resend create an HTTPS Webhook at `https://YOUR-FORUM/shared-inbox/webhook`, subscribe to **`email.received`**, and copy its signing secret into the setting above. Include the forum's base path if installed under a subfolder. Keep the original body and `svix-id`, `svix-timestamp`, `svix-signature` headers intact at your reverse proxy.
 5. Open the receiving category and select **Shared Inbox with Resend**. As an administrator create Inboxes: `support` receives `support@inbox.example.com`, `sales` receives `sales@inbox.example.com`. The same page is available at `/shared-inbox-settings`.
 6. Send a message from an external mailbox. Check that a topic with the `inbox-support` tag appears. Reply in Discourse and confirm that the email stays in the original external thread. Test a whisper and close/reopen the topic before rollout.
+
+All six site settings are available while the plugin is disabled. Administrators can also open `/admin/site_settings/category/shared_inbox_with_resend` directly. Both the documented checkout directory and the default `discourse-shared-inbox-resend` directory are supported; renaming an existing installation is not required. After updating the plugin, restart/rebuild Discourse and refresh the admin page.
 
 The API key and Webhook signing secret are server-only settings. No Resend credentials are entered in the user settings page.
 

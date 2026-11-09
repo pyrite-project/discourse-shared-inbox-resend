@@ -44,6 +44,15 @@
         "nickname_template": "Inbox sender nickname template",
         "nickname_template_help": "Leave blank to inherit the global template. Example: {user_nickname} @ XXX. Placeholders: {user_nickname}, {user_username}, {inbox_name}, {inbox_slug}."
       }
+    },
+    "admin_js": {
+      "admin": {
+        "site_settings": {
+          "categories": {
+            "shared_inbox_with_resend": "Shared Inbox with Resend"
+          }
+        }
+      }
     }
   }
 }

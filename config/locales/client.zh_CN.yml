@@ -44,6 +44,15 @@
         "nickname_template": "Inbox 发件人昵称模板",
         "nickname_template_help": "留空继承全局模板。例如：{user_nickname} @ XXX。支持 {user_nickname}、{user_username}、{inbox_name}、{inbox_slug}。"
       }
+    },
+    "admin_js": {
+      "admin": {
+        "site_settings": {
+          "categories": {
+            "shared_inbox_with_resend": "Shared Inbox with Resend（共享收件箱）"
+          }
+        }
+      }
     }
   }
 }

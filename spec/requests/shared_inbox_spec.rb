@@ -32,6 +32,28 @@ RSpec.describe "Shared Inbox host integration" do
     expect(response.status).to eq(200)
   end
 
+  it "exposes the admin settings button while the plugin is disabled" do
+    SiteSetting.shared_inbox_enabled = false
+    sign_in(admin)
+    get "/admin/plugins.json"
+    expect(response.status).to eq(200)
+    plugin = response.parsed_body.fetch("plugins").find { |entry| entry["name"] == SharedInbox::PLUGIN_NAME }
+    expect(plugin).to include("has_settings" => true, "enabled" => false)
+  end
+
+  it "returns all six plugin settings through the admin plugin filter while disabled" do
+    SiteSetting.shared_inbox_enabled = false
+    sign_in(admin)
+    get "/admin/site_settings.json", params: { plugin: SharedInbox::PLUGIN_NAME }
+    expect(response.status).to eq(200)
+    settings = response.parsed_body.fetch("site_settings")
+    expect(settings.map { |entry| entry["setting"] }).to contain_exactly(
+      "shared_inbox_enabled", "shared_inbox_domain", "shared_inbox_nickname_template",
+      "shared_inbox_category_id", "shared_inbox_resend_api_key", "shared_inbox_webhook_secret",
+    )
+    expect(settings.map { |entry| entry["category"] }.uniq).to eq(["shared_inbox_with_resend"])
+  end
+
   it "uses the actual post creation event and persists the inbound marker" do
     conversation = import_email
     expect(conversation.topic.first_post.reload.custom_fields["shared_inbox_inbound"]).to eq(true)

@@ -31,7 +31,7 @@ bundle exec rake db:migrate
 
 1. 在 Resend 配置域名或专用子域名，设置接收用 MX 和发信用 SPF/DKIM，确保同时启用接收和发送。已有公司邮箱时，宜使用专用子域名。
 2. 创建邮件接收类别，为预期的客服团队授予查看及回复权限，并启用站点标签功能。导入的邮件继承此类别的可见性。
-3. 在 **管理 → 设置 → 插件** 中填写：
+3. 在 **管理 → 站点设置** 的 **Shared Inbox with Resend（共享收件箱）** 分组中填写（也可搜索 `shared_inbox`）：
 
    | 设置 | 内容 |
    | --- | --- |
@@ -45,6 +45,8 @@ bundle exec rake db:migrate
 4. 在 Resend 新建 Webhook：`https://你的论坛/shared-inbox/webhook`，订阅 **`email.received`**；复制该 Webhook 的签名密钥到上述设置。子目录部署时带上论坛的基础路径。反向代理需保留原始请求体和 `svix-id`、`svix-timestamp`、`svix-signature` 请求头。
 5. 打开接收类别，点击 **Shared Inbox with Resend**。管理员可新建 Inbox，例如 `support` 对应 `support@inbox.example.com`，`sales` 对应 `sales@inbox.example.com`。也可直接访问 `/shared-inbox-settings`。
 6. 用外部邮箱发一封测试邮件，确认出现带 `inbox-support` 标签的话题；公开回复应回到原邮件线程。再验证密语、关闭、归档和恢复。
+
+插件未启用时，管理员也可以看到全部六项站点设置。可直接访问 `/admin/site_settings/category/shared_inbox_with_resend`。支持文档中的安装目录及默认的 `discourse-shared-inbox-resend` 目录，无需重命名现有安装目录。更新插件后请重启或重建 Discourse，并刷新后台页面。
 
 用户设置页不接收 Resend 凭据。API Key 和 Webhook 签名密钥仅供服务端使用，不下发给客户端。
 
